@@ -9,24 +9,54 @@ import (
 )
 
 type Player struct {
-	name    string
-	maxhp   int
-	hp      int
-	level   int
-	Xp      int
-	mana    int
-	maxmana int
+	name     string
+	position Position
+	maxhp    int
+	hp       int
+	level    int
+	Xp       int
+	mana     int
+	maxmana  int
+	fighting bool
 }
 type Monster struct {
 	monsterName string
 	hp          int
 	xp          int
 }
+type Position struct {
+	x, y int
+}
+
+var WorldMap = map[Position]*Monster{
+	{1, 0}:  newMonster("Goblin"),
+	{-1, 0}: newMonster("Troll"),
+	{1, 2}:  newMonster("Imp"),
+	{2, 2}:  newMonster("Raccoon"),
+	{3, 3}:  newMonster("Hobgoblin"),
+}
 
 func printmsg(msg string) {
 	for _, r := range msg {
 		fmt.Print(string(r))
 		time.Sleep(50 * time.Millisecond)
+	}
+}
+func printPlayerPosition(p Player) {
+	fmt.Printf("Current position: (%d, %d)\n", p.position.x, p.position.y)
+}
+func movePlayer(p *Player, direction string) {
+	switch direction {
+	case "north":
+		p.position.y++
+	case "south":
+		p.position.y--
+	case "east":
+		p.position.x++
+	case "west":
+		p.position.x--
+	default:
+		fmt.Println("Invalid direction. Try again.")
 	}
 }
 func newPlayer(name string) *Player {
@@ -37,6 +67,7 @@ func newPlayer(name string) *Player {
 	p.Xp = 0
 	p.maxmana = 20
 	p.mana = 20
+	p.position = Position{0, 0}
 	return &p
 }
 func newMonster(monsterName string) *Monster {
@@ -47,15 +78,17 @@ func newMonster(monsterName string) *Monster {
 }
 func (p *Player) Attack(m *Monster) {
 	xpIntoString := strconv.Itoa(m.xp)
+
 	var attackValue int = p.level * 10
+	attackValueIntoString := strconv.Itoa(attackValue)
 	if m.hp > 0 && p.hp > 0 {
 		printmsg("You attack the monster!")
+		fmt.Println("You deal " + attackValueIntoString + " damage!")
 		m.hp = m.hp - attackValue
 		if m.hp <= 0 {
 			printmsg("Monster is dead!, You've gained " + xpIntoString + " XP!")
 			fmt.Println("")
 			p.Xp = p.Xp + m.xp
-			m.hp = 30
 		}
 	}
 }
@@ -84,15 +117,15 @@ func (m *Monster) MonsterAttack(p *Player) {
 	}
 
 }
-func runGame(p *Player, m *Monster) {
+func fight(p *Player, m *Monster) {
+
 	xpThreshhold := 10 + (p.level * 5)
 	for p.hp > 0 {
 		realUserInput := ""
-		printmsg("A monster appears before you!")
-		fmt.Println("")
 		fmt.Println("What would you like to do?: ")
-		fmt.Println("1) Attack")
-		fmt.Println("2) Heal (5 mana)")
+		fmt.Println(`1) Attack
+2) Heal (5 mana)`)
+
 		fmt.Scan(&realUserInput)
 		userInput := strings.TrimSpace(strings.ToLower(realUserInput))
 		if userInput == "attack" || userInput == "1" {
@@ -114,14 +147,40 @@ func runGame(p *Player, m *Monster) {
 			printmsg("Hero's new HP: " + strconv.Itoa(p.maxhp))
 			printmsg("Hero's new mana pool: " + strconv.Itoa(p.maxmana))
 		}
+		if m.hp <= 0 {
+			break
+		}
+	}
+
+}
+func travel(p *Player) {
+	for {
+		printPlayerPosition(*p)
+		realUserInput := ""
+		fmt.Print("Enter a direction to travel (north, south, east, west): ")
+		var userInput string
+		fmt.Scan(&realUserInput)
+		userInput = strings.TrimSpace(strings.ToLower(realUserInput))
+		if userInput == "quit" {
+			fmt.Println("Goodbye!")
+			break
+		}
+
+		movePlayer(p, userInput)
+
+		// Check if there's a monster at the current position
+		if monster, ok := WorldMap[p.position]; ok {
+			printmsg("A wild " + monster.monsterName + " appears!\n")
+			fight(p, monster)
+			delete(WorldMap, p.position)
+		}
 	}
 }
-
 func main() {
 	var playerName string
 	printmsg("Welcome to the game, choose your character's name: ")
 	fmt.Scan(&playerName)
 	player := newPlayer(playerName)
-	monster := newMonster("Goblin")
-	runGame(player, monster)
+	travel(player)
+
 }
