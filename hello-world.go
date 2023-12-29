@@ -128,12 +128,13 @@ func fight(p *Player, m *Monster) {
 
 		fmt.Scan(&realUserInput)
 		userInput := strings.TrimSpace(strings.ToLower(realUserInput))
-		if userInput == "attack" || userInput == "1" {
+		switch userInput {
+		case "attack":
 			p.Attack(m)
 			m.MonsterAttack(p)
-		} else if userInput == "heal" || userInput == "2" {
+		case "heal":
 			Heal(p)
-		} else {
+		default:
 			fmt.Println("That's not a valid input!")
 		}
 		if p.Xp >= xpThreshhold {
