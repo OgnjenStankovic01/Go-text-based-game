@@ -35,6 +35,13 @@ var WorldMap = map[Position]*Monster{
 	{2, 2}:  newMonster("Raccoon"),
 	{3, 3}:  newMonster("Hobgoblin"),
 }
+var descMap = map[Position]string{
+	{0, 0}: "desc of 0,0",
+	{1, 0}: "desc of 1,0",
+	{0, 1}: "desc 0,1",
+	{2, 0}: "desc 2,0",
+	{2, 1}: "desc 2,1",
+}
 
 func printmsg(msg string) {
 	for _, r := range msg {
@@ -168,6 +175,10 @@ func travel(p *Player) {
 		}
 
 		movePlayer(p, userInput)
+
+		if descMap, ok := descMap[p.position]; ok {
+			printmsg{descMap[p.position]}
+		}
 
 		// Check if there's a monster at the current position
 		if monster, ok := WorldMap[p.position]; ok {
