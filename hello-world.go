@@ -36,11 +36,13 @@ var WorldMap = map[Position]*Monster{
 	{3, 3}:  newMonster("Hobgoblin"),
 }
 var descMap = map[Position]string{
-	{0, 0}: "desc of 0,0",
-	{1, 0}: "desc of 1,0",
-	{0, 1}: "desc 0,1",
-	{2, 0}: "desc 2,0",
-	{2, 1}: "desc 2,1",
+	{0, 0}:  "hello",
+	{-1, 0}: "a house is here",
+	{-2, 0}: "there is a shed here",
+	{1, 0}:  "desc of 1,0",
+	{0, 1}:  "desc 0,1",
+	{2, 0}:  "desc 2,0",
+	{2, 1}:  "desc 2,1",
 }
 
 func printmsg(msg string) {
@@ -83,6 +85,7 @@ func newMonster(monsterName string) *Monster {
 	m.xp = 5
 	return &m
 }
+
 func (p *Player) Attack(m *Monster) {
 	xpIntoString := strconv.Itoa(m.xp)
 
@@ -176,8 +179,8 @@ func travel(p *Player) {
 
 		movePlayer(p, userInput)
 
-		if descMap, ok := descMap[p.position]; ok {
-			printmsg{descMap[p.position]}
+		if desc, ok := descMap[p.position]; ok {
+			printmsg(desc)
 		}
 
 		// Check if there's a monster at the current position
