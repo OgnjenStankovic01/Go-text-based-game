@@ -36,13 +36,13 @@ var WorldMap = map[Position]*Monster{
 	{3, 3}:  newMonster("Hobgoblin"),
 }
 var descMap = map[Position]string{
-	{0, 0}:  "hello",
-	{-1, 0}: "a house is here",
-	{-2, 0}: "there is a shed here",
-	{1, 0}:  "desc of 1,0",
-	{0, 1}:  "desc 0,1",
-	{2, 0}:  "desc 2,0",
-	{2, 1}:  "desc 2,1",
+	{0, 0}:  "hello\n",
+	{-1, 0}: "a house is here\n",
+	{-2, 0}: "there is a shed here\n",
+	{1, 0}:  "desc of 1,0\n",
+	{0, 1}:  "desc 0,1\n",
+	{2, 0}:  "desc 2,0\n",
+	{2, 1}:  "desc 2,1\n",
 }
 
 func printmsg(msg string) {
