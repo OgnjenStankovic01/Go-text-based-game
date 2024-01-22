@@ -89,12 +89,21 @@ func newPotion(name string, healValue int, id int, description string, usableInC
 		healValue:      healValue,
 		usableInCombat: usableInCombat,
 	}
+	pot.name = name
+	pot.healValue = healValue
+	pot.id = id
+	pot.description = description
+	pot.usableInCombat = usableInCombat
 }
 func newWeapon(name string, attack int, id int, description string) {
 	weapon := Weapon{
 		Item:   Item{name: name, id: id, description: description},
 		attack: attack,
 	}
+	weapon.name = name
+	weapon.id = id
+	weapon.attack = attack
+	weapon.description = description
 }
 func spawnItems(pot *Potion, weapon *Weapon) {
 	newPotion("Healing Potion", 10, 1, "Heals the player for 10 HP", true)
