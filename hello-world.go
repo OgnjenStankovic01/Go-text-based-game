@@ -9,15 +9,16 @@ import (
 )
 
 type Player struct {
-	name     string
-	position Position
-	maxhp    int
-	hp       int
-	level    int
-	Xp       int
-	mana     int
-	maxmana  int
-	fighting bool
+	name      string
+	position  Position
+	maxhp     int
+	hp        int
+	level     int
+	Xp        int
+	mana      int
+	maxmana   int
+	fighting  bool
+	inventory [5]int
 }
 type Monster struct {
 	monsterName string
@@ -26,6 +27,20 @@ type Monster struct {
 }
 type Position struct {
 	x, y int
+}
+type Item struct {
+	id          int
+	name        string
+	description string
+}
+type Weapon struct {
+	Item
+	attack int
+}
+type Potion struct {
+	Item
+	healValue      int
+	usableInCombat bool
 }
 
 var WorldMap = map[Position]*Monster{
@@ -68,6 +83,24 @@ func movePlayer(p *Player, direction string) {
 		fmt.Println("Invalid direction. Try again.")
 	}
 }
+func newPotion(name string, healValue int, id int, description string, usableInCombat bool) {
+	pot := Potion{
+		Item:           Item{name: name, id: id, description: description},
+		healValue:      healValue,
+		usableInCombat: usableInCombat,
+	}
+}
+func newWeapon(name string, attack int, id int, description string) {
+	weapon := Weapon{
+		Item:   Item{name: name, id: id, description: description},
+		attack: attack,
+	}
+}
+func spawnItems(pot *Potion, weapon *Weapon) {
+	newPotion("Healing Potion", 10, 1, "Heals the player for 10 HP", true)
+	newPotion("Greater Healing Potion", 20, 2, "Heals the player for 20 HP", true)
+	newWeapon("Greatsword", 30, 3, "A big sword that slashes for 30 damage!")
+}
 func newPlayer(name string) *Player {
 	p := Player{name: name}
 	p.maxhp = 100
@@ -77,6 +110,7 @@ func newPlayer(name string) *Player {
 	p.maxmana = 20
 	p.mana = 20
 	p.position = Position{0, 0}
+	p.inventory = [5]int{0, 0, 0, 0, 0}
 	return &p
 }
 func newMonster(monsterName string) *Monster {
@@ -197,5 +231,5 @@ func main() {
 	fmt.Scan(&playerName)
 	player := newPlayer(playerName)
 	travel(player)
-
+	spawnItems(&Potion{}, &Weapon{})
 }
